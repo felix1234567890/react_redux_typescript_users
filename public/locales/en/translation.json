@@ -1,0 +1,18 @@
+{
+  "headerTitle": "User Search App",
+  "searchText": "Search users by country",
+  "sortBy": "Sort by",
+  "next": "Next",
+  "previous": "Previous",
+  "none": "None",
+  "ageAsc": "Age - ascending",
+  "ageDesc": "Age - descending",
+  "ageUnder": "Age - under 40",
+  "ageOver": "Age - over 40",
+  "male": "Male",
+  "female": "Female",
+  "lng": "EN",
+  "country": "Country",
+  "gender": "Gender",
+  "age": "Age"
+}

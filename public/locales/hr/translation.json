@@ -1,0 +1,18 @@
+{
+  "headerTitle": "Aplikacija za pretragu korisnika",
+  "searchText": "Pretražuj korisnike po zemlji",
+  "sortBy": "Razvrstaj prema",
+  "next": "Sljedeći",
+  "previous": "Prethodni",
+  "none": "Ništa",
+  "ageAsc": "Godine - uzlazno",
+  "ageDesc": "Godine - silazno",
+  "ageUnder": "Godine - ispod 40",
+  "ageOver": "Godine - iznad 40",
+  "male": "Muškarci",
+  "female": "Žene",
+  "lng": "HR",
+  "country": "Država",
+  "gender": "Spol",
+  "age": "Starost"
+}

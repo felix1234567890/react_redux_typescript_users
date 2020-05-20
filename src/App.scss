@@ -1,0 +1,158 @@
+@import 'variables.scss';
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+button {
+  display: inline-block;
+  padding: 12px 38px;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  color: var(--blue);
+  background-color: #fff;
+  border: 2px solid var(--blue);
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 150px;
+  margin: 1rem;
+}
+
+button:hover,
+button:focus {
+  outline: none;
+  color: #fff;
+  background-color: #3db5eb;
+  border-color: #3db5eb;
+}
+
+button:active {
+  color: #fff;
+  background-color: var(--drk-blue);
+  border-color: var(--drk-blue);
+}
+
+.card {
+  padding: 20px;
+  border: 1px solid #c9c9c9;
+  border-radius: 7px;
+  box-shadow: 2px 2px 4px rgba(255, 255, 255, 0.15);
+  height: auto;
+  word-wrap: break-word;
+  box-sizing: border-box;
+  height: 100%;
+  text-align: center;
+}
+
+.card > img:first-child {
+  border-radius: 7px 7px 0 0;
+  max-width: 100%;
+}
+
+.card h3 {
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+}
+
+.card p {
+  color: #757575;
+  margin: 0.7rem auto;
+}
+.custom-select {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  height: 47px;
+  line-height: 47px;
+  margin-top: 1rem;
+}
+
+.selected {
+  background-color: $body-background-color;
+  border-radius: 6px;
+  border: 1px solid #566273;
+  color: #ffffff;
+  padding-left: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.selected.open {
+  border: 1px solid #566273;
+  border-radius: 6px 6px 0px 0px;
+}
+
+.selected:after {
+  position: absolute;
+  content: '';
+  top: 22px;
+  right: 10px;
+  width: 0;
+  height: 0;
+}
+
+.items {
+  color: #ffffff;
+  border-radius: 0px 0px 6px 6px;
+  overflow: hidden;
+  border: 1px solid #566273;
+  position: absolute;
+  background-color: $body-background-color;
+  left: 0;
+  right: 0;
+}
+
+.item {
+  color: #ffffff;
+  padding-left: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.item:hover {
+  background-color: #b68a28;
+}
+
+.selectHide {
+  display: none;
+}
+.container {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 24px;
+
+  h1 {
+    text-align: center;
+  }
+}
+.card-row {
+  display: grid;
+  grid-template-columns: repeat(2, 49%);
+  justify-content: space-between;
+  row-gap: 1.5rem;
+}
+.sortBy span {
+  color: white;
+  font-weight: 700;
+  text-align: center;
+  display: block;
+}
+.language {
+  font-weight: 600;
+  margin-left: 2rem;
+  font-size: 1.8rem;
+  &:hover {
+    color: white;
+  }
+  @media (max-width: 600px) {
+    margin-top: 2rem;
+    margin-left: unset;
+  }
+}
