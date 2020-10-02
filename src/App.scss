@@ -173,6 +173,7 @@ button:active {
   border: 1px solid transparent;
   font-size: 14;
   font-weight: 500;
+  width: 220px;
 }
 .google-button:hover {
   cursor: "pointer";
@@ -182,4 +183,9 @@ button:active {
   margin-right: 10px;
   background: #fff;
   padding: 10px;
+}
+.logout {
+  margin-left: 20px;
+  padding: 12px;
+  width: 100px;
 }

@@ -1,11 +1,13 @@
 import React from "react";
-import { useFirebase } from "react-redux-firebase";
-import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { isEmpty, isLoaded, useFirebase } from "react-redux-firebase";
+import { Redirect, useHistory } from "react-router-dom";
 import { ReactComponent as Google } from "../images/GoogleSVG.svg";
 
 const SignIn = () => {
   const firebase = useFirebase();
   const history = useHistory();
+  const auth = useSelector((state: any) => state.firebase.auth);
 
   const signInWithGoogle = () => {
     firebase
@@ -17,6 +19,8 @@ const SignIn = () => {
         history.push("/users");
       });
   };
+
+  if (isLoaded(auth) && !isEmpty(auth)) return <Redirect to="/users" />;
   return (
     <div className="container">
       <div className="center">
