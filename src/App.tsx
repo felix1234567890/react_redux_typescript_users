@@ -1,18 +1,25 @@
-import React, { useState, useEffect, FC } from 'react';
-import Header from './components/Header';
-import Pagination from './components/Pagination';
-import './App.scss';
-import UsersList from './components/UsersList';
-import Filters from './components/Filters';
-import { connect } from 'react-redux';
-import { RootState } from './redux/reducers/userReducer';
-import { ThunkDispatch } from 'redux-thunk';
-import { bindActionCreators } from 'redux';
-import { UserActionTypes } from './redux/actions/userActionInterfaces';
-import { thunkloadUsers, paginateUsers, filterUsers, sortUsers } from './redux/actions/userActions';
-import { AppState } from './redux/reducers';
-import { Option } from './components/Filters';
-import { ValueType } from 'react-select';
+import React, { useState, useEffect, FC } from "react";
+import Header from "./components/Header";
+import Pagination from "./components/Pagination";
+import "./App.scss";
+import UsersList from "./components/UsersList";
+import Filters from "./components/Filters";
+import { connect, useSelector } from "react-redux";
+import { RootState } from "./redux/reducers/userReducer";
+import { ThunkDispatch } from "redux-thunk";
+import { bindActionCreators } from "redux";
+import { UserActionTypes } from "./redux/actions/userActionInterfaces";
+import {
+  thunkloadUsers,
+  paginateUsers,
+  filterUsers,
+  sortUsers,
+} from "./redux/actions/userActions";
+import { AppState } from "./redux/reducers";
+import { Option } from "./components/Filters";
+import { ValueType } from "react-select";
+import { useFirebase, useFirebaseConnect } from "react-redux-firebase";
+import { User } from "./components/UserItem";
 
 type PaginationState = {
   pageNumber: number;
@@ -34,11 +41,14 @@ const App: FC<AppProps> = ({
     pageCount: null,
   });
 
-  const [sortOrder, setSortOrder] = useState<any>({ value: '', label: 'None' });
-
+  const [sortOrder, setSortOrder] = useState<any>({ value: "", label: "None" });
+  useFirebaseConnect("users");
+  const users: User[] = useSelector((state: any) => state.firebase.data.users);
   useEffect(() => {
-    thunkloadUsers();
-  }, [thunkloadUsers]);
+    if (Array.isArray(users)) {
+      thunkloadUsers(users);
+    }
+  }, [thunkloadUsers, users]);
 
   useEffect(() => {
     if (sortedUsers.length > 0) {
@@ -96,14 +106,20 @@ const App: FC<AppProps> = ({
   );
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, void, UserActionTypes>) => {
-  return bindActionCreators({ thunkloadUsers, paginateUsers, filterUsers, sortUsers }, dispatch);
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<RootState, void, UserActionTypes>
+) => {
+  return bindActionCreators(
+    { thunkloadUsers, paginateUsers, filterUsers, sortUsers },
+    dispatch
+  );
 };
 const mapStateToProps = (state: AppState) => ({
   sortedUsers: state.user.sortedUsers,
   shownUsers: state.user.shownUsers,
   loading: state.user.loading,
 });
-type AppProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
+type AppProps = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 const connector = connect(mapStateToProps, mapDispatchToProps);
 export default connector(App);
