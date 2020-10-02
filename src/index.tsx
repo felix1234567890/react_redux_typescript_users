@@ -1,21 +1,25 @@
-import React, { Suspense } from 'react';
-import ReactDOM from 'react-dom';
-import './index.scss';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-import { Provider } from 'react-redux';
-import store from './redux/store';
-import './i18n';
+import React, { Suspense } from "react";
+import ReactDOM from "react-dom";
+import "./index.scss";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
+import { Provider } from "react-redux";
+import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import store from "./redux/store";
+import "./i18n";
+import { rrfConfig } from "./firebase";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Suspense fallback={null}>
-        <App />
-      </Suspense>
+      <ReactReduxFirebaseProvider {...rrfConfig}>
+        <Suspense fallback={null}>
+          <App />
+        </Suspense>
+      </ReactReduxFirebaseProvider>
     </Provider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
