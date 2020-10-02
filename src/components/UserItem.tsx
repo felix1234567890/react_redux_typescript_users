@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import { yupResolver } from "@hookform/resolvers";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
+import { useFirebase } from "react-redux-firebase";
 
 export type User = {
   name: string;
@@ -23,20 +24,21 @@ const schema = yup.object().shape({
     .string()
     .required("Name is required")
     .min(2, "Name must have at least 2 letters"),
-  email: yup
-    .string()
-    .required("Email is required")
-    .email("This is not valid email"),
   country: yup
     .string()
     .required("Country is required")
     .min(2, "Country must have at least 2 letters"),
-  age: yup.number().positive().integer().required(),
+  age: yup
+    .number()
+    .positive()
+    .integer("This is not number")
+    .required("Age is required"),
 });
 
 const UserItem: FC<UserItemProps> = ({
   user: { name, email, photo, country, gender, age },
 }) => {
+  const firebase = useFirebase();
   const [data, setData] = useState({
     age,
     name,
@@ -52,13 +54,22 @@ const UserItem: FC<UserItemProps> = ({
   function toggleModal() {
     setIsOpen(!isOpen);
   }
-  const { t }: UseTranslationResponse = useTranslation();
-  const onChange = (event) => {
-    setData((prevState) => ({
-      ...prevState,
-      [event.target.name]: event.target.value,
-    }));
+
+  const onSubmit = async (data) => {
+    setData(data);
+    await firebase
+      .database()
+      .ref(`users`)
+      .orderByChild("email")
+      .equalTo(email)
+      .on("value", async (snapshot) =>
+        snapshot.forEach((child) => {
+          child.ref.update(data);
+        })
+      );
+    toggleModal();
   };
+  const { t }: UseTranslationResponse = useTranslation();
   return (
     <article className="card">
       <img src={photo} alt="user avatar" />
@@ -89,7 +100,7 @@ const UserItem: FC<UserItemProps> = ({
         closeTimeoutMS={500}
         ariaHideApp={false}
       >
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <h2>Edit user</h2>
           <div className="form-group">
             <label htmlFor="">Name</label>
@@ -102,17 +113,6 @@ const UserItem: FC<UserItemProps> = ({
             />
           </div>
           <p className="error">{errors.name?.message}</p>
-          <div className="form-group">
-            <label htmlFor="">Email</label>
-            <input
-              ref={register}
-              type="text"
-              name="email"
-              defaultValue={data.email}
-              placeholder="Email"
-            />
-          </div>
-          <p className="error">{errors.email?.message}</p>
           <div className="form-group">
             <label htmlFor="">Country</label>
             <input
