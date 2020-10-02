@@ -1,4 +1,4 @@
-@import 'variables.scss';
+@import "variables.scss";
 
 .buttons {
   display: flex;
@@ -90,7 +90,7 @@ button:active {
 
 .selected:after {
   position: absolute;
-  content: '';
+  content: "";
   top: 22px;
   right: 10px;
   width: 0;
@@ -131,6 +131,12 @@ button:active {
   h1 {
     text-align: center;
   }
+  .center {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 .card-row {
   display: grid;
@@ -155,4 +161,25 @@ button:active {
     margin-top: 2rem;
     margin-left: unset;
   }
+}
+.google-button {
+  background-color: rgb(66, 133, 244);
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.24);
+  padding: 0;
+  border-radius: 2;
+  border: 1px solid transparent;
+  font-size: 14;
+  font-weight: 500;
+}
+.google-button:hover {
+  cursor: "pointer";
+  opacity: 0.9;
+}
+.icon {
+  margin-right: 10px;
+  background: #fff;
+  padding: 10px;
 }
