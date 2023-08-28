@@ -1,16 +1,16 @@
 import React, { FC, useState, useEffect } from "react";
-import { useTranslation, UseTranslationResponse } from "react-i18next";
-import { useFirebase } from "react-redux-firebase";
-
+import { useTranslation } from "react-i18next";
+import {useSignOut} from 'react-firebase-hooks/auth'
+import { app, auth } from "../firebase";
 interface HeaderProps {
   search: (event: React.FormEvent<HTMLInputElement>) => void;
 }
 
 const Header: FC<HeaderProps> = ({ search }) => {
   const [lang, setLang] = useState("en");
-  const firebase = useFirebase();
+  const [signOut] = useSignOut(auth)
 
-  const { t, i18n }: UseTranslationResponse = useTranslation();
+  const { t, i18n } = useTranslation();
   const changeLanguage = () => {
     if (lang === "en") {
       setLang("hr");
@@ -19,7 +19,7 @@ const Header: FC<HeaderProps> = ({ search }) => {
     }
   };
   const logout = async () => {
-    await firebase.logout();
+    await signOut();
   };
   useEffect(() => {
     i18n.changeLanguage(lang);

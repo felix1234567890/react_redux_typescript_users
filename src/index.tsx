@@ -4,34 +4,36 @@ import "./index.scss";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { Provider } from "react-redux";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import store from "./redux/store";
 import "./i18n";
-import { rrfConfig } from "./firebase";
 import PrivateRoute from "./PrivateRoute";
 import Login from "./components/Login";
+import { createRoot } from "react-dom/client";
 
-ReactDOM.render(
+const domNode = document.getElementById("root");
+if (!domNode) throw new Error("Failed to find the root element");
+const root = createRoot(domNode);
+root.render(
   <React.StrictMode>
     <Router>
       <Provider store={store}>
-        <ReactReduxFirebaseProvider {...rrfConfig}>
-          <Suspense fallback={null}>
-            <Switch>
-              <PrivateRoute path="/users">
-                <App />
-              </PrivateRoute>
-              <Route path="/" exact>
-                <Login />
-              </Route>
-            </Switch>
-          </Suspense>
-        </ReactReduxFirebaseProvider>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route
+              path="/users"
+              element={
+                // <PrivateRoute>
+                  <App />
+                // </PrivateRoute>
+              }
+            />
+            <Route path="/" element={<Login />} />
+          </Routes>
+        </Suspense>
       </Provider>
     </Router>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

@@ -4,7 +4,7 @@ import Pagination from "./components/Pagination";
 import "./App.scss";
 import UsersList from "./components/UsersList";
 import Filters from "./components/Filters";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { RootState } from "./redux/reducers/userReducer";
 import { ThunkDispatch } from "redux-thunk";
 import { bindActionCreators } from "redux";
@@ -17,10 +17,12 @@ import {
 } from "./redux/actions/userActions";
 import { AppState } from "./redux/reducers";
 import { Option } from "./components/Filters";
-import { ValueType } from "react-select";
-import { useFirebase, useFirebaseConnect } from "react-redux-firebase";
+import { SingleValue } from "react-select";
+import { getDatabase, ref } from "firebase/database";
+import { app } from "./firebase";
+import { useListVals } from "react-firebase-hooks/database";
 import { User } from "./components/UserItem";
-
+const database = getDatabase(app);
 type PaginationState = {
   pageNumber: number;
   itemsPerPage: number;
@@ -32,7 +34,7 @@ const App: FC<AppProps> = ({
   filterUsers,
   sortUsers,
   shownUsers,
-  loading,
+  loading: loader,
   sortedUsers,
 }) => {
   const [paginationState, setPaginationState] = useState<PaginationState>({
@@ -41,14 +43,12 @@ const App: FC<AppProps> = ({
     pageCount: null,
   });
 
-  const [sortOrder, setSortOrder] = useState<any>({ value: "", label: "None" });
-  useFirebaseConnect("users");
-  const users: User[] = useSelector((state: any) => state.firebase.data.users);
+  const [sortOrder, setSortOrder] = useState<{value:string, label:string}>({ value: "", label: "None" });
+  const [values, loading] = useListVals<User>(ref(database, "users"));
+console.log(values)
   useEffect(() => {
-    if (Array.isArray(users)) {
-      thunkloadUsers(users);
-    }
-  }, [thunkloadUsers, users]);
+    thunkloadUsers(values!);
+  }, [values]);
 
   useEffect(() => {
     if (sortedUsers.length > 0) {
@@ -68,8 +68,8 @@ const App: FC<AppProps> = ({
     sortUsers(sortOrder.value);
   }, [sortOrder, sortUsers]);
 
-  const handleSortByAge = (srtOrder: ValueType<Option>) => {
-    setSortOrder(srtOrder);
+  const handleSortByAge = (srtOrder: SingleValue<Option>) => {
+    setSortOrder(srtOrder!);
     setPaginationState((prevState) => ({
       ...prevState,
       pageNumber: 1,
@@ -93,15 +93,20 @@ const App: FC<AppProps> = ({
 
   return (
     <>
-      <Header search={handleSearch} />
-      <Filters sort={handleSortByAge} sortOrder={sortOrder} />
-      <UsersList users={shownUsers!} loading={loading!} />
-      <Pagination
-        pageCount={paginationState.pageCount!}
-        pageNumber={paginationState.pageNumber}
-        increaseNumber={increaseNumber}
-        decreaseNumber={decreaseNumber}
-      />
+      {loading && <span>List: Loading...</span>}
+      {!!values!.length && (
+        <>
+          <Header search={handleSearch} />
+          <Filters sort={handleSortByAge} sortOrder={sortOrder} />
+          <UsersList users={shownUsers!} loading={loader!} />
+          <Pagination
+            pageCount={paginationState.pageCount!}
+            pageNumber={paginationState.pageNumber}
+            increaseNumber={increaseNumber}
+            decreaseNumber={decreaseNumber}
+          />
+        </>
+      )}
     </>
   );
 };

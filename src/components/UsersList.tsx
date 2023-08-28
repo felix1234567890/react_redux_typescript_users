@@ -10,7 +10,7 @@ const UsersList: FC<UsersListProps> = ({ users, loading }) => {
     <div className="container">
       {loading && <h1>Loading...</h1>}
       <section className="card-row">
-        {users.length > 0 &&
+        {users?.length > 0 &&
           users.map((user: User, index: number) => {
             return <UserItem user={user} key={index} />;
           })}

@@ -1,11 +1,13 @@
 import React, { FC, useState } from "react";
-import { useTranslation, UseTranslationResponse } from "react-i18next";
-import editIcon from "../images/edit.png";
+import { useTranslation } from "react-i18next";
+import editIcon from "../../public/images/edit.png";
 import Modal from "react-modal";
-import { yupResolver } from "@hookform/resolvers";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
-import { useFirebase } from "react-redux-firebase";
+import { ref, getDatabase } from "firebase/database";
+import { app } from "../firebase";
+import { useObject, useObjectVal } from "react-firebase-hooks/database";
 
 export type User = {
   name: string;
@@ -33,43 +35,41 @@ const schema = yup.object().shape({
     .positive()
     .integer("This is not number")
     .required("Age is required"),
+  gender: yup
+    .mixed()
+    .oneOf(["male", "female", "other"] as const)
+    .defined(),
 });
 
 const UserItem: FC<UserItemProps> = ({
   user: { name, email, photo, country, gender, age },
 }) => {
-  const firebase = useFirebase();
-  const [data, setData] = useState({
+  const [data, setData] = useState<Omit<User, "photo">>({
     age,
     name,
     email,
     country,
     gender,
   });
-  const { register, handleSubmit, errors } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
+  const database = getDatabase(app);
   const [isOpen, setIsOpen] = useState(false);
   function toggleModal() {
     setIsOpen(!isOpen);
   }
-
+  const [value, loading, error] = useObjectVal(ref(database, "users/"))
   const onSubmit = async (data) => {
     setData(data);
-    await firebase
-      .database()
-      .ref(`users`)
-      .orderByChild("email")
-      .equalTo(email)
-      .on("value", async (snapshot) =>
-        snapshot.forEach((child) => {
-          child.ref.update(data);
-        })
-      );
     toggleModal();
   };
-  const { t }: UseTranslationResponse = useTranslation();
+  const { t } = useTranslation();
   return (
     <article className="card">
       <img src={photo} alt="user avatar" />
@@ -105,7 +105,7 @@ const UserItem: FC<UserItemProps> = ({
           <div className="form-group">
             <label htmlFor="">Name</label>
             <input
-              ref={register}
+              {...register("name")}
               type="text"
               name="name"
               defaultValue={data.name}
@@ -116,7 +116,7 @@ const UserItem: FC<UserItemProps> = ({
           <div className="form-group">
             <label htmlFor="">Country</label>
             <input
-              ref={register}
+              {...register("country")}
               type="text"
               name="country"
               defaultValue={data.country}
@@ -126,7 +126,7 @@ const UserItem: FC<UserItemProps> = ({
           <p className="error">{errors.country?.message}</p>
           <div className="form-group">
             <label htmlFor="">Gender</label>
-            <select name="gender" defaultValue={data.gender} ref={register}>
+            <select defaultValue={data.gender} {...register("gender")}>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
@@ -134,7 +134,7 @@ const UserItem: FC<UserItemProps> = ({
           <div className="form-group">
             <label htmlFor="">Age</label>
             <input
-              ref={register}
+              {...register("age")}
               type="number"
               name="age"
               defaultValue={data.age}

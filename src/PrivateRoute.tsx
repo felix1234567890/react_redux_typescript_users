@@ -1,26 +1,20 @@
-import React, { FC } from "react";
-import { Route, Redirect } from "react-router-dom";
-import { isLoaded, isEmpty } from "react-redux-firebase";
-import { useSelector } from "react-redux";
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "./firebase";
 
-const PrivateRoute: any = ({ children, ...remainingProps }) => {
-  const auth = useSelector((state: any) => state.firebase.auth);
-  return (
-    <Route
-      {...remainingProps}
-      render={({ location }) =>
-        isLoaded(auth) && !isEmpty(auth) ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/",
-              state: { from: location },
-            }}
-          />
-        )
-      }
-    />
-  );
+const PrivateRoute = ({ children }) => {
+  const [user, loading, error] = useAuthState(auth);
+  if (!user) {
+    return (
+      <Navigate
+        replace
+        to={{
+          pathname: "/",
+        }}
+      />
+    );
+  }
+  return children;
 };
 export default PrivateRoute;
